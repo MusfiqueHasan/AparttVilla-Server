@@ -132,12 +132,9 @@ async function run() {
 
         app.put('/properties/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
             const updatedUser = req.body;
-            console.log(updatedUser)
             const filter = { _id: ObjectId(id) };
             const options = { update: true }
-
             const updateDoc = {
                 $set: {
 
@@ -165,6 +162,13 @@ async function run() {
             res.json(result)
 
         })
+        app.delete('/buyingList/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await buyingCollection.deleteOne(query)
+            res.json(result)
+
+        })
 
         app.post('/buyingList', async (req, res) => {
             const property = req.body;
@@ -176,6 +180,36 @@ async function run() {
             const allProperties = await buyingCollection.find({}).toArray()
             res.json(allProperties)
         })
+
+        app.get("/buyingList/:email", async (req, res) => {
+            const result = await buyingCollection.find({
+                userEmail: req.params.email,
+            }).toArray();
+            res.send(result);
+        });
+
+        app.put('/buyingList/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedUser = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { update: true }
+            const updateDoc = {
+                $set: {
+                    status: updatedUser.status
+                }
+            };
+            const result = await buyingCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+
+
+        app.post('/filter', async (req, res) => {
+            const { division, bedrooms, baths, balcony } = req.body
+            const getData = await propertyCollection.find({ division, bedrooms, baths, balcony }).toArray()
+
+            res.json(getData)
+        })
+
 
 
     } finally {
