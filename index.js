@@ -46,6 +46,7 @@ async function run() {
         const reviewCollection = database.collection('reviews');
         const propertyCollection = database.collection('properties');
         const buyingCollection = database.collection('buyingList');
+        const divisionCollection = database.collection('divisons');
 
 
         app.get('/users', async (req, res) => {
@@ -208,6 +209,17 @@ async function run() {
             const getData = await propertyCollection.find({ division, bedrooms, baths, balcony }).toArray()
 
             res.json(getData)
+        })
+
+
+        app.post('/division', async (req, res) => {
+            const property = req.body;
+            const result = await divisionCollection.insertOne(property)
+            res.json(result)
+        })
+        app.get('/division', async (req, res) => {
+            const allDivision = await divisionCollection.find({}).toArray()
+            res.json(allDivision)
         })
 
 
